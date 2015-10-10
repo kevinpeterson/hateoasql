@@ -5,6 +5,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [liberator "0.13"]
                  [compojure "1.3.4"]
+                 [inflections "0.9.14"]
                  [ring/ring-core "1.2.1"]
                  [org.clojure/java.jdbc "0.4.2"]
                  [mysql/mysql-connector-java "5.1.21"]])

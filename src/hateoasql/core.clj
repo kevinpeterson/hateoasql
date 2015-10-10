@@ -1,5 +1,6 @@
 (ns hateoasql.core
   (:require [clojure.data.json :as json]
+            [inflections.core :as inflec]
             [hateoasql.dao :as dao]
             [clojure.core.reducers :as r]
             [liberator.core :refer [resource defresource]]
@@ -9,42 +10,55 @@
 
 (def ^:const serveraddress "http://localhost:3000/")
 
+(def table-restresource-map
+  (let [dbtorest (into {} (map (fn [table] {table (s/lower-case (inflec/plural table))}) dao/tablenames))]
+    {:dbtorest dbtorest
+     :resttodb (into {} (map (fn [entry] {(second entry) (first entry)}) dbtorest))
+     }
+    ))
+
+(defn to-rest [name] (get (get table-restresource-map :dbtorest) name))
+
+(defn to-db [name] (get (get table-restresource-map :resttodb) name))
+
 (extend-type java.sql.Timestamp
   json/JSONWriter
   (-write [date out]
     (json/-write (str date) out)))
 
+(extend-type java.sql.Date
+  json/JSONWriter
+  (-write [date out]
+    (json/-write (str date) out)))
+
 (defn handle-resource-link [item instance]
-  (println item)
-  (println instance)
   (if-not (nil? item)
     {(get item :source)
      (str serveraddress
-          (get item :source) "/"
+          (to-rest (get item :source)) "/"
           (get instance (keyword (s/lower-case (get item :target_col)))))}))
 
 (defn handle-resources-link [item id]
-  (println id)
   (if-not (nil? item)
     {(get item :target)
      (str serveraddress
-          (get item :source) "/" id "/"
-          (get item :target))}))
+          (to-rest (get item :source)) "/" id "/"
+          (to-rest (get item :target)))}))
 
 (defn keys-to-links
   ([keys resource instance id]
-   (let [links {:self (str serveraddress resource "/" id)}]
+   (let [links {:self (str serveraddress (to-rest resource) "/" id)}]
      (merge
       links
       (into {} (map (fn [item] (handle-resource-link item instance)) (get (get keys :target) resource)))
       (into {} (map (fn [item] (handle-resources-link item id)) (get (get keys :source) resource))))))
   ([keys resource resourceid subresource subresourceid instance]
    (if (nil? subresourceid)
-     (let [links {:self (str serveraddress resource "/" resourceid "/" subresource)}]
+     (let [links {}]
        (merge
         links
         (into {} (map (fn [item] (handle-resource-link item instance)) (get (get keys :target) subresource)))))
-     (let [links {:self (str serveraddress subresource "/" subresourceid)}]
+     (let [links {:self (str serveraddress (to-rest subresource) "/" subresourceid)}]
        (merge
         links
         (into {} (map (fn [item] (handle-resource-link item instance)) (get (get keys :target) subresource)))
@@ -80,9 +94,9 @@
   :handle-ok (map (fn [item] (add-links resource id subresource (dao/get-pk-value subresource item) item)) (dao/get-all-sub resource id subresource)))
 
 (defroutes app
-  (ANY "/:resource/:id" [resource id] (database-resource resource id))
-  (ANY "/:resource" [resource] (database-resource-list resource))
-  (ANY "/:resource/:id/:subresource" [resource id subresource] (database-subresource resource id subresource)))
+  (ANY "/:resource/:id" [resource id] (database-resource (to-db resource) id))
+  (ANY "/:resource" [resource] (database-resource-list (to-db resource)))
+  (ANY "/:resource/:id/:subresource" [resource id subresource] (database-subresource (to-db resource) id (to-db subresource))))
 
 (def handler
   (-> app
