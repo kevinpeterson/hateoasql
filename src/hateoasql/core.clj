@@ -32,6 +32,7 @@
     (json/-write (str date) out)))
 
 (defn handle-resource-link [item instance]
+  (println item)
   (if-not (nil? item)
     {(get item :source)
      (str serveraddress

@@ -8,4 +8,5 @@
                  [inflections "0.9.14"]
                  [ring/ring-core "1.2.1"]
                  [org.clojure/java.jdbc "0.4.2"]
+                 [clojure.jdbc/clojure.jdbc-c3p0 "0.3.1"]
                  [mysql/mysql-connector-java "5.1.21"]])

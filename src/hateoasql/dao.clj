@@ -1,25 +1,48 @@
 (ns hateoasql.dao
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.string :as s]
+            [jdbc.pool.c3p0 :as pool]
             [clojure.core.reducers :as r]))
 
-(let [db-host (or (System/getenv "DB_HOST")
-                  "localhost")
-      db-driver (or (System/getenv "DB_DRIVER")
-                  "com.mysql.jdbc.Driver")
-      db-port (or (System/getenv "DB_PORT")
-                  3306)
-      db-name (System/getenv "DB")
-      db-type (or (System/getenv "DB_TYPE")
-                  "mysql")
-      db-user (System/getenv "DB_USER")
-      db-password (System/getenv "DB_PASSWORD")]
+(def db-uri
+  (let [url (System/getenv "DATABASE_URL")]
+    (if-not (nil? url)
+    (java.net.URI. url))))
 
-  (def db {:classname db-driver
-           :subprotocol db-type
-           :subname (str "//" db-host ":" db-port "/" db-name)
-           :user db-user
-           :password db-password}))
+(def user-and-password
+  (if-not (nil? db-uri)
+    (if (nil? (.getUserInfo db-uri))
+      nil (clojure.string/split (.getUserInfo db-uri) #":"))))
+
+(def db
+  (pool/make-datasource-spec
+    (if (nil? db-uri)
+      (let [db-host (or (System/getenv "DB_HOST")
+                        "localhost")
+            db-driver (or (System/getenv "DB_DRIVER")
+                          "com.mysql.jdbc.Driver")
+            db-port (or (System/getenv "DB_PORT")
+                        3306)
+            db-name (System/getenv "DB")
+            db-type (or (System/getenv "DB_TYPE")
+                        "mysql")
+            db-user (System/getenv "DB_USER")
+            db-password (System/getenv "DB_PASSWORD")]
+        {:classname db-driver
+       :subprotocol db-type
+       :subname (str "//" db-host ":" db-port "/" db-name)
+       :user db-user
+       :password db-password}
+      )
+
+        {:classname   "com.mysql.jdbc.Driver"
+         :subprotocol (or "mysql" (System/getenv "DB_TYPE"))
+         :user        (or (get user-and-password 0) (System/getenv "DB_USER"))
+         :password    (or (get user-and-password 1) (System/getenv "DB_PASSWORD"))
+         :subname     (if (= -1 (.getPort db-uri))
+                        (format "//%s%s" (.getHost db-uri) (.getPath db-uri))
+                        (format "//%s:%s%s" (.getHost db-uri) (.getPort db-uri) (.getPath db-uri)))}
+        )))
 
 (defn get-foriegn-keys [table]
   (jdbc/with-db-metadata [md db]
