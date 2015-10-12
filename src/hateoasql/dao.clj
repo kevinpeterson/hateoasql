@@ -33,7 +33,7 @@
        :subname (str "//" db-host ":" db-port "/" db-name)
        :user db-user
        :password db-password
-       :max-connection-lifetime 50 * 1000
+       :max-connection-lifetime 10 * 1000
        :test-connection-on-borrow true
        :test-idle-connections-period 10 * 1000
        :test-connection-query "SELECT 1"}
