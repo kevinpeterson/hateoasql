@@ -5,7 +5,7 @@
             [clojure.core.reducers :as r]))
 
 (def db-uri
-  (let [url (System/getenv "DATABASE_URL")]
+  (let [url (or (System/getenv "DATABASE_URL") (System/getenv "CLEARDB_DATABASE_URL"))]
     (if-not (nil? url)
     (java.net.URI. url))))
 

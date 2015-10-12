@@ -1,1 +1,1 @@
-web: DATABASE_URL=$CLEARDB_DATABASE_URL lein ring server-headless $PORT
+web: lein ring server-headless $PORT
