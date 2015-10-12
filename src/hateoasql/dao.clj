@@ -32,11 +32,7 @@
        :subprotocol db-type
        :subname (str "//" db-host ":" db-port "/" db-name)
        :user db-user
-       :password db-password
-       :max-connection-lifetime 10 * 1000
-       :test-connection-on-borrow true
-       :test-idle-connections-period 10 * 1000
-       :test-connection-query "SELECT 1"}
+       :password db-password}
       )
 
         {:classname   "com.mysql.jdbc.Driver"
@@ -45,7 +41,13 @@
          :password    (or (get user-and-password 1) (System/getenv "DB_PASSWORD"))
          :subname     (if (= -1 (.getPort db-uri))
                         (format "//%s%s" (.getHost db-uri) (.getPath db-uri))
-                        (format "//%s:%s%s" (.getHost db-uri) (.getPort db-uri) (.getPath db-uri)))}
+                        (format "//%s:%s%s" (.getHost db-uri) (.getPort db-uri) (.getPath db-uri)))
+
+         :test-connection-on-borrow true
+         :test-connection-on-return true
+         ;:test-idle-connections-period 10 * 1000
+         :max-connection-lifetime 10 * 1000
+         :test-connection-query "SELECT 1"}
         )))
 
 (defn get-foriegn-keys [table]
