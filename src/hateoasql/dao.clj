@@ -35,6 +35,7 @@
        :password db-password
        :max-connection-lifetime 50 * 1000
        :test-connection-on-borrow true
+       :test-idle-connections-period 10 * 1000
        :test-connection-query "SELECT 1"}
       )
 
