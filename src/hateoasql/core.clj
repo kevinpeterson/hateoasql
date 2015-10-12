@@ -32,7 +32,6 @@
     (json/-write (str date) out)))
 
 (defn handle-resource-link [item instance]
-  (println item)
   (if-not (nil? item)
     {(get item :source)
      (str serveraddress
@@ -47,6 +46,8 @@
           (to-rest (get item :target)))}))
 
 (defn keys-to-links
+  ([resource]
+   (let [links {:self (str serveraddress (to-rest resource))}] links))
   ([keys resource instance id]
    (let [links {:self (str serveraddress (to-rest resource) "/" id)}]
      (merge
@@ -66,6 +67,8 @@
         (into {} (map (fn [item] (handle-resources-link item subresourceid)) (get (get keys :source) subresource))))))))
 
 (defn add-links
+  ([resource instance]
+   (assoc instance :links (keys-to-links resource)))
   ([resource instance id]
    (let [keys dao/relationship-maps]
      (assoc instance :links (keys-to-links keys resource instance id))))
@@ -86,6 +89,10 @@
                  {:entry instance})))
   :handle-ok :entry)
 
+(defresource database-resources []
+             :available-media-types ["application/json"]
+             :handle-ok (map (fn [item] (add-links item {:name item})) dao/tables-with-primary-key))
+
 (defresource database-resource-list [resource]
   :available-media-types ["application/json"]
   :handle-ok (map (fn [item] (add-links resource item (dao/get-pk-value resource item))) (dao/get-all resource)))
@@ -95,6 +102,7 @@
   :handle-ok (map (fn [item] (add-links resource id subresource (dao/get-pk-value subresource item) item)) (dao/get-all-sub resource id subresource)))
 
 (defroutes app
+  (ANY "/" [] (database-resources))
   (ANY "/:resource/:id" [resource id] (database-resource (to-db resource) id))
   (ANY "/:resource" [resource] (database-resource-list (to-db resource)))
   (ANY "/:resource/:id/:subresource" [resource id subresource] (database-subresource (to-db resource) id (to-db subresource))))

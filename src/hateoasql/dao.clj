@@ -45,7 +45,6 @@
 
          :test-connection-on-borrow true
          :test-connection-on-return true
-         ;:test-idle-connections-period 10 * 1000
          :max-connection-lifetime 10 * 1000
          :test-connection-query "SELECT 1"}
         )))
@@ -64,6 +63,8 @@
                                            (let [result (jdbc/metadata-result (.getPrimaryKeys md nil nil table))]
                                              (if (= 1 (count result))
                                                {table (get (first result) :column_name)})))) tablenames))))
+(def tables-with-primary-key
+  (filter (fn [table] (not (nil? (get primary-keys table)))) tablenames))
 
 (def fk-map
   (let [fk-map (map (fn [table]
