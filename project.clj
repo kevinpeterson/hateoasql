@@ -1,4 +1,5 @@
 (defproject hateosql "0.1.0-SNAPSHOT"
+  :min-lein-version "2.0.0"
   :plugins [[lein-ring "0.8.11"]
             [lein-cljfmt "0.3.0"]]
   :ring {:handler hateoasql.core/handler}
