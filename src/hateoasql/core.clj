@@ -8,7 +8,7 @@
             [compojure.core :refer [defroutes ANY]]
             [clojure.string :as s]))
 
-(def ^:const serveraddress "http://localhost:3000/")
+(def ^:const serveraddress (or (System/getenv "BASE_URL") "http://localhost:3000/"))
 
 (def table-restresource-map
   (let [dbtorest (into {} (map (fn [table] {table (s/lower-case (inflec/plural table))}) dao/tablenames))]
