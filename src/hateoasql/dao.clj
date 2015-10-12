@@ -32,7 +32,8 @@
        :subprotocol db-type
        :subname (str "//" db-host ":" db-port "/" db-name)
        :user db-user
-       :password db-password}
+       :password db-password
+       :max-connection-lifetime 50 * 1000}
       )
 
         {:classname   "com.mysql.jdbc.Driver"
