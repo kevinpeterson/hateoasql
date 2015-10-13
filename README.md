@@ -1,6 +1,6 @@
 # HATEOASql
 
-Turn your relational database into a [HATEOAS](https://en.wikipedia.org/wiki/HATEOAS) REST Service. 
+Turn your relational database into a [HATEOAS](https://en.wikipedia.org/wiki/HATEOAS) REST Service. Database tables are exposed as REST Resources, and foreign keys are used to build Resource links. Inspired by the [postREST](https://github.com/begriffs/postgrest) project.
 
 ## [DEMO](https://hateoasql.herokuapp.com/)
 The demo uses the [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/) to demonstrate the linked resources.
