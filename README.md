@@ -36,7 +36,7 @@ Example:
     DB_USER=myUser DB=myDb BASE_URL=http://someServer.com:5000/ lein ring server 5000    
     
 ### Resources
-HATEOASql assumes that every table in the given database is equivalent to a REST Resource, assuming that the table has a single primary key. Resources will appear as the pluralized version of the table name (thanks to [inflections-clj](https://github.com/r0man/inflections-clj]).
+HATEOASql assumes that every table in the given database is equivalent to a REST Resource, assuming that the table has a single primary key. Resources will appear as the pluralized version of the table name (thanks to [inflections-clj](https://github.com/r0man/inflections-clj])).
 
 Any HREF ending in an identifier (e.g ```/films```) will return a JSON Array type with all possible ```films```. Any HREF ending in an identifier (e.g. ```/films/1```) will return a single JSON Object.
 
