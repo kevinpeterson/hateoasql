@@ -26,8 +26,8 @@ where ```[params]``` can be:
     DB_DRIVER ; Database Driver Class Name | default 'com.mysql.jdbc.Driver'
     DB_PORT ; Database Port | default '3306'
     DB_TYPE ; Database Type | default 'mysql'
-    DB_USER ; Database User Name | default ""
-    DB_PASSWORD ; Database Type | required
+    DB_USER ; Database User Name | required
+    DB_PASSWORD ; Database Password | default ""
     DB ; Database Name | required
     BASE_URL ; Base URL for HREFs | default 'http://localhost:3000/'
 
@@ -38,7 +38,7 @@ Example:
 ### Resources
 HATEOASql assumes that every table in the given database is equivalent to a REST Resource, assuming that the table has a single primary key. Resources will appear as the pluralized version of the table name (thanks to (inflections-clj)[https://github.com/r0man/inflections-clj]).
 
-Any HREF ending in an identifier (e.g ```/films``` will return a JSON Array type with all possible ```films```. Any HREF ending in an identifier (e.g. ```/films/1``` will return a single JSON Object.
+Any HREF ending in an identifier (e.g ```/films```) will return a JSON Array type with all possible ```films```. Any HREF ending in an identifier (e.g. ```/films/1```) will return a single JSON Object.
 
 ### Resource Links
 Resources may have associations to other Resources. This is expressed in as hierarchical HREFs such as a ```/films/1/actors``` that are expressed in the ```links``` section of the JSON Resource.
