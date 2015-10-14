@@ -1,6 +1,6 @@
 # HATEOASql
 
-Turn your relational database into a [HATEOAS](https://en.wikipedia.org/wiki/HATEOAS) REST Service. 
+Turn your relational database into a [HATEOAS](https://en.wikipedia.org/wiki/HATEOAS) REST Service. Database tables are exposed as REST Resources, and foreign keys are used to build Resource links. Inspired by the [postREST](https://github.com/begriffs/postgrest) project.
 
 ## [DEMO](https://hateoasql.herokuapp.com/)
 The demo uses the [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/) to demonstrate the linked resources.
@@ -38,7 +38,7 @@ Example:
 ### Resources
 HATEOASql assumes that every table in the given database is equivalent to a REST Resource, assuming that the table has a single primary key. Resources will appear as the pluralized version of the table name (thanks to [inflections-clj](https://github.com/r0man/inflections-clj])).
 
-Any HREF ending in an identifier (e.g ```/films```) will return a JSON Array type with all possible ```films```. Any HREF ending in an identifier (e.g. ```/films/1```) will return a single JSON Object.
+Any HREF ending in an identifier (e.g ```/films```) will return a JSON Array type with all possible Resources for that type. Any HREF ending in an identifier (e.g. ```/films/1```) will return a single JSON Object.
 
 ### Resource Links
 Resources may have associations to other Resources. This is expressed in as hierarchical HREFs such as a ```/films/1/actors``` that are expressed in the ```links``` section of the JSON Resource.
