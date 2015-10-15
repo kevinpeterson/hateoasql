@@ -2,7 +2,7 @@
 
 Turn your relational database into a [HATEOAS](https://en.wikipedia.org/wiki/HATEOAS) REST Service. Database tables are exposed as REST Resources, and foreign keys are used to build Resource links. Inspired by the [postREST](https://github.com/begriffs/postgrest) project.
 
-## [DEMO](https://hateoasql.herokuapp.com/)
+## [DEMO](http://hateoasql.kevinp.me/)
 The demo uses the [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/) to demonstrate the linked resources.
 
 __NOTE:__ Best viewed with a JSON rendering browser plugin such as [JSONView for Firefox](https://addons.mozilla.org/en-us/firefox/addon/jsonview/) or [for Chrome](https://chrome.google.com/webstore/detail/chklaanhfefbnpoihckbnefhakgolnmc).
