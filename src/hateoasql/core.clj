@@ -11,6 +11,8 @@
 (def ^:const serveraddress (or (System/getenv "BASE_URL") "http://localhost:3000/"))
 
 (def table-restresource-map
+  "Map a REST name to the database table name.
+  This involves lower-casing and pluralizing the database table name."
   (let [dbtorest (into {} (map (fn [table] {table (s/lower-case (inflec/plural table))}) dao/tablenames))]
     {:dbtorest dbtorest
      :resttodb (into {} (map (fn [entry] {(second entry) (first entry)}) dbtorest))
@@ -31,14 +33,18 @@
   (-write [date out]
     (json/-write (str date) out)))
 
-(defn handle-resource-link [item instance]
+(defn handle-resource-link
+  "Build the HATEOAS links for a single resource."
+  [item instance]
   (if-not (nil? item)
     {(get item :source)
      (str serveraddress
           (to-rest (get item :source)) "/"
           (get instance (keyword (s/lower-case (get item :target_col)))))}))
 
-(defn handle-resources-link [item id]
+(defn handle-resources-link
+  "Build the HATEOAS links for sub-resources."
+  [item id]
   (if-not (nil? item)
     {(get item :target)
      (str serveraddress
@@ -46,6 +52,7 @@
           (to-rest (get item :target)))}))
 
 (defn keys-to-links
+  "Transform database foreign keys into HATEOAS links."
   ([resource]
    (let [links {:self (str serveraddress (to-rest resource))}] links))
   ([keys resource instance id]
@@ -67,6 +74,7 @@
         (into {} (map (fn [item] (handle-resources-link item subresourceid)) (get (get keys :source) subresource))))))))
 
 (defn add-links
+  "Add the HREF links to the resource JSON."
   ([resource instance]
    (assoc instance :links (keys-to-links resource)))
   ([resource instance id]
@@ -77,6 +85,7 @@
      (assoc instance :links (keys-to-links keys resource resourceid subresource subresourceid instance)))))
 
 (defn construct-resource [resource id]
+  "Retrieve and construct a resource given an id."
   (let [instance (dao/get-by-id resource id)]
     (if (some? instance)
       (add-links resource instance id))))
