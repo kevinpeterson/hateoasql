@@ -9,6 +9,8 @@ mysql:
 hateoasql:
   hostname: hateoasql
   build: hateoasql
+  volumes:
+    - ../:/work/
   ports:
     - 3000:3000
   links:
