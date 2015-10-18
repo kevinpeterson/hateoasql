@@ -136,7 +136,12 @@
   (let [query (get (get by-fk-queries subresource) resource)]
     (jdbc/query db [query id])))
 
-(defn update
+(defn update!
   "Overwrite a resource with a new version."
   [resource instance]
   (jdbc/update! db resource instance [(str (get primary-keys resource)" = ?") (get-pk-value resource instance)]))
+
+(defn create!
+  "Crate a new resource."
+  [resource instance]
+  (jdbc/insert! db resource instance))
