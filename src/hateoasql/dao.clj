@@ -142,6 +142,11 @@
   (jdbc/update! db resource instance [(str (get primary-keys resource)" = ?") (get-pk-value resource instance)]))
 
 (defn create!
-  "Crate a new resource."
+  "Create a new resource."
   [resource instance]
   (jdbc/insert! db resource instance))
+
+(defn delete!
+  "Delete a resource by id."
+  [resource id]
+  (jdbc/delete! db resource [(str (get primary-keys resource)" = ?") id]))
